@@ -54,7 +54,9 @@ type SensorSequence struct {
 }
 
 // ComputeWindowHash returns a stable hash over (experiment, type, location,
-// stage, sorted samples). It is used for idempotent re-uploads.
+// stage, sorted samples). The samples are normalised to ascending time order so
+// that merely reordering the same input samples leaves the hash unchanged; it is
+// used for idempotent re-uploads.
 func (s *SensorSequence) ComputeWindowHash() string {
 	type key struct {
 		EID  string
@@ -65,7 +67,12 @@ func (s *SensorSequence) ComputeWindowHash() string {
 	}
 	samples := make([]Sample, len(s.Samples))
 	copy(samples, s.Samples)
-	sort.Slice(samples, func(i, j int) bool { return samples[i].T > samples[j].T })
+	sort.Slice(samples, func(i, j int) bool {
+		if samples[i].T == samples[j].T {
+			return samples[i].Value < samples[j].Value
+		}
+		return samples[i].T < samples[j].T
+	})
 	raw, _ := json.Marshal(samples)
 	k := key{EID: s.ExperimentID, Typ: string(s.SensorType), Loc: s.Location, Stg: s.Stage, Samp: string(raw)}
 	sum := sha256.Sum256([]byte(jsonMarshal(k)))

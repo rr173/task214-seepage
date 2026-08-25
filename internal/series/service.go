@@ -92,11 +92,14 @@ func ToObservations(seqs []*model.SensorSequence) []solver.Observation {
 			out = append(out, solver.Observation{XFrac: seq.XFrac, T: smp.T, Value: smp.Value})
 		}
 	}
+	// Normalise to ascending time (then ascending x_frac) so the resulting
+	// observations are order-independent regardless of how the source samples
+	// were arranged.
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].T == out[j].T {
 			return out[i].XFrac < out[j].XFrac
 		}
-		return out[i].T > out[j].T
+		return out[i].T < out[j].T
 	})
 	return out
 }

@@ -441,12 +441,13 @@ func MeanObservationEnergy(obs []Observation) float64 {
 	return s / float64(len(obs))
 }
 
-// SortObservations orders observations by time for stable downstream use.
+// SortObservations orders observations by ascending time (then ascending
+// x_frac) for stable downstream use.
 func SortObservations(obs []Observation) {
 	sort.Slice(obs, func(i, j int) bool {
 		if obs[i].T == obs[j].T {
 			return obs[i].XFrac < obs[j].XFrac
 		}
-		return obs[i].T > obs[j].T
+		return obs[i].T < obs[j].T
 	})
 }
