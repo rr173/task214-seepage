@@ -70,13 +70,17 @@ func (s *Service) Revalidate(id string) (*model.SensorSequence, error) {
 
 // SplitBoundaryAndObservations partitions sequences into Dirichlet boundary
 // conditions (inlet/outlet pressure) and internal observations used for fitting.
+// The inlet and outlet sequences retain their boundary role: they drive the
+// forward model's Dirichlet ends and are never handed to the fitter as internal
+// observations, since a Dirichlet boundary is reproduced by every candidate and
+// therefore carries no permeability information.
 func SplitBoundaryAndObservations(seqs []*model.SensorSequence) (inlet, outlet *model.SensorSequence, obs []*model.SensorSequence) {
 	for _, seq := range seqs {
 		switch seq.Location {
 		case "inlet":
 			inlet = seq
 		case "outlet":
-			obs = append(obs, seq)
+			outlet = seq
 		default:
 			obs = append(obs, seq)
 		}

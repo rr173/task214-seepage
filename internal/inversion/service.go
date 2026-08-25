@@ -53,6 +53,8 @@ func (s *Service) fluidGeom(exp *model.Experiment) solver.FluidGeom {
 // sequenceFunc builds a linear-interpolation function from a sequence's samples
 // via the shared solver implementation, so boundary reconstruction during
 // inversion exactly matches how the data generator replays the same samples.
+// Times outside the sampled window clamp to the nearest end point, handled
+// inside solver.PiecewiseLinear so the two code paths cannot diverge.
 func sequenceFunc(seq *model.SensorSequence) func(float64) float64 {
 	ts := make([]float64, len(seq.Samples))
 	vs := make([]float64, len(seq.Samples))
@@ -60,13 +62,7 @@ func sequenceFunc(seq *model.SensorSequence) func(float64) float64 {
 		ts[i] = smp.T
 		vs[i] = smp.Value
 	}
-	f := solver.PiecewiseLinear(ts, vs)
-	return func(t float64) float64 {
-		if t < ts[0] || t > ts[len(ts)-1] {
-			return 0
-		}
-		return f(t)
-	}
+	return solver.PiecewiseLinear(ts, vs)
 }
 
 // bcFromSequences derives the Dirichlet boundary conditions. The inlet pressure

@@ -17,11 +17,15 @@ func PiecewiseLinear(ts, vs []float64) func(float64) float64 {
 		if len(vs) == 0 {
 			return 0
 		}
+		// Clamp to the nearest end point when t falls outside (or on the
+		// boundary of) the sampled window: this is how uploaded boundary
+		// sequences are replayed during inversion, so a request at or beyond
+		// the last sample holds the end value rather than collapsing to zero.
 		if t <= ts[0] {
-			return 0
+			return vs[0]
 		}
 		if t >= ts[len(ts)-1] {
-			return 0
+			return vs[len(vs)-1]
 		}
 		for i := 1; i < len(ts); i++ {
 			if t <= ts[i] {
