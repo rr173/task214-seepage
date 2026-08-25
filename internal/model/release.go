@@ -18,6 +18,8 @@ type ReleaseVersion struct {
 }
 
 // NewReleaseVersion builds a published version with the given sequence number.
+// The caller supplies the 1-based sequence number to assign (1 for the first
+// published version of an experiment, then 2, 3, ...); it is stored verbatim.
 func NewReleaseVersion(expID, modelID, invID string, perm, lo, hi float64, seq int, notes string) *ReleaseVersion {
 	return &ReleaseVersion{
 		ID:                genID("rel_"),
@@ -28,7 +30,7 @@ func NewReleaseVersion(expID, modelID, invID string, perm, lo, hi float64, seq i
 		IntervalLo:        lo,
 		IntervalHi:        hi,
 		Notes:             notes,
-		Seq:               seq - 1,
+		Seq:               seq,
 		CreatedAt:         time.Now(),
 	}
 }

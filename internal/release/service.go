@@ -24,11 +24,14 @@ func (s *Service) Publish(expID, modelID, invID string, perm, lo, hi float64, no
 	if err != nil {
 		return nil, err
 	}
+	// NextReleaseSeq returns the highest sequence number currently stored for
+	// the experiment (0 when none exist). The new version therefore starts at
+	// 1 and grows by one per subsequent publish: 1, 2, 3, ...
 	seq, err := s.store.NextReleaseSeq(expID)
 	if err != nil {
 		return nil, err
 	}
-	r := model.NewReleaseVersion(expID, modelID, invID, perm, lo, hi, seq-1, notes)
+	r := model.NewReleaseVersion(expID, modelID, invID, perm, lo, hi, seq+1, notes)
 	if err := s.store.CreateReleaseVersion(r); err != nil {
 		return nil, err
 	}
