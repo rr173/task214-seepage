@@ -25,7 +25,9 @@ func (h *Server) uploadSequence(w http.ResponseWriter, r *http.Request) {
 	seq, err := h.svc.Series.Upload(r.PathValue("id"), req.SensorType, req.Location, req.XFrac, req.Stage, req.Unit, req.Samples)
 	if err != nil {
 		if errors.Is(err, model.ErrDuplicateSequence) {
-			writeJSON(w, http.StatusOK, map[string]interface{}{"id": seq.ID, "state": string(seq.State), "idempotent": false})
+			// Idempotent re-upload: return the existing record with a success
+			// response. seq is guaranteed non-nil by the service layer.
+			writeJSON(w, http.StatusOK, map[string]interface{}{"id": seq.ID, "state": string(seq.State), "idempotent": true})
 			return
 		}
 		writeError(w, statusForError(err), err.Error())

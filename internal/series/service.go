@@ -39,7 +39,7 @@ func (s *Service) Upload(expID, typ, location string, xf float64, stage, unit st
 	seq.State = Assess(seq)
 	stored, err := s.store.CreateSensorSequence(seq)
 	if err != nil {
-		return nil, err
+		return stored, err
 	}
 	return stored, nil
 }

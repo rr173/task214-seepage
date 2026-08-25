@@ -12,8 +12,8 @@ import (
 // If an identical sequence already exists it is returned together with
 // model.ErrDuplicateSequence and nothing is written.
 func (s *Store) CreateSensorSequence(seq *model.SensorSequence) (*model.SensorSequence, error) {
-	if _, err := s.GetSensorSequenceByHash(seq.WindowHash); err == nil {
-		return nil, model.ErrDuplicateSequence
+	if existing, err := s.GetSensorSequenceByHash(seq.WindowHash); err == nil {
+		return existing, model.ErrDuplicateSequence
 	}
 	samples, err := json.Marshal(seq.Samples)
 	if err != nil {
