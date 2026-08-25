@@ -55,6 +55,12 @@ type SensorSequence struct {
 
 // ComputeWindowHash returns a stable hash over (experiment, type, location,
 // stage, sorted samples). It is used for idempotent re-uploads.
+//
+// The experiment id is part of the key so that the same window of data filed
+// against two different experiments yields two independent sequence records
+// instead of collapsing onto a single shared row. The idempotent-dedup window
+// is therefore (experiment, sensor identity, sample contents), never the
+// sample contents alone.
 func (s *SensorSequence) ComputeWindowHash() string {
 	type key struct {
 		EID  string
@@ -67,7 +73,7 @@ func (s *SensorSequence) ComputeWindowHash() string {
 	copy(samples, s.Samples)
 	sort.Slice(samples, func(i, j int) bool { return samples[i].T < samples[j].T })
 	raw, _ := json.Marshal(samples)
-	k := key{Typ: string(s.SensorType), Loc: s.Location, Stg: s.Stage, Samp: string(raw)}
+	k := key{EID: s.ExperimentID, Typ: string(s.SensorType), Loc: s.Location, Stg: s.Stage, Samp: string(raw)}
 	sum := sha256.Sum256([]byte(jsonMarshal(k)))
 	return hex.EncodeToString(sum[:])
 }

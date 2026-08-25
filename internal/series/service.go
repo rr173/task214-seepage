@@ -32,7 +32,11 @@ func (s *Service) Upload(expID, typ, location string, xf float64, stage, unit st
 	if typ != string(model.SensorPressure) && typ != string(model.SensorFlow) {
 		return nil, model.ErrUnitMismatch
 	}
-	seq := model.NewSensorSequence("", model.SensorType(typ), location, xf, stage, unit, samples)
+	// The sequence is bound to the experiment being uploaded against; the
+	// experiment id feeds the window hash so that the same window filed under
+	// two different experiments produces two independent records, and it must
+	// be persisted so List(expID) can recover the sequences later.
+	seq := model.NewSensorSequence(expID, model.SensorType(typ), location, xf, stage, unit, samples)
 	if err := Validate(seq); err != nil {
 		return nil, err
 	}

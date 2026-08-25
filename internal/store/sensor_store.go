@@ -43,7 +43,7 @@ func (s *Store) GetSensorSequence(id string) (*model.SensorSequence, error) {
 func (s *Store) GetSensorSequenceByHash(hash string) (*model.SensorSequence, error) {
 	row := s.db.QueryRow(
 		`SELECT id,experiment_id,sensor_type,location,x_frac,stage,unit,samples,window_hash,state,created_at
-		 FROM sensor_sequences ORDER BY created_at ASC LIMIT 1`)
+		 FROM sensor_sequences WHERE window_hash=?`, hash)
 	return scanSensor(row)
 }
 
