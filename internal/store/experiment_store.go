@@ -82,7 +82,7 @@ func scanExperiment(scanner interface {
 	)
 	if err := scanner.Scan(&id, &name, &length, &diameter, &porosity, &viscosity, &density, &compressibility, &state, &createdAt, &sealedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errors.New("resource not found")
+			return nil, model.ErrNotFound
 		}
 		return nil, err
 	}

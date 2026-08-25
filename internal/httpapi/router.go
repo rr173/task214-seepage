@@ -79,6 +79,8 @@ func writeError(w http.ResponseWriter, code int, msg string) {
 // statusForError maps domain errors to HTTP status codes.
 func statusForError(err error) int {
 	switch {
+	case errors.Is(err, model.ErrNotFound):
+		return http.StatusNotFound
 	case errors.Is(err, model.ErrSealed),
 		errors.Is(err, model.ErrInvalidState),
 		errors.Is(err, model.ErrUnitMismatch),

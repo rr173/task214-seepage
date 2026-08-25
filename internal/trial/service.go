@@ -42,7 +42,7 @@ func (s *Service) Create(name string, g model.Geometry, f model.Fluid) (*model.E
 func (s *Service) Get(id string) (*model.Experiment, error) {
 	e, err := s.store.GetExperiment(id)
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, err
 	}
 	return e, nil
 }
