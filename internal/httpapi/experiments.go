@@ -55,7 +55,7 @@ func (h *Server) sealExperiment(w http.ResponseWriter, r *http.Request) {
 		writeError(w, statusForError(err), err.Error())
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]string{"status": "completed", "id": r.PathValue("id")})
+	writeJSON(w, http.StatusOK, map[string]string{"status": "sealed", "id": r.PathValue("id")})
 }
 
 type transitionReq struct {

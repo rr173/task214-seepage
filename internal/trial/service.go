@@ -5,6 +5,7 @@ package trial
 
 import (
 	"errors"
+	"time"
 
 	"task214-seepage/internal/model"
 	"task214-seepage/internal/store"
@@ -59,7 +60,8 @@ func (s *Service) Transition(id string, to model.ExperimentState) error {
 	return s.store.UpdateExperimentState(id, to)
 }
 
-// Seal marks the experiment sealed and immutable.
+// Seal marks the experiment sealed and immutable, persisting the terminal
+// sealed state and recording the seal timestamp.
 func (s *Service) Seal(id string) error {
 	e, err := s.store.GetExperiment(id)
 	if err != nil {
@@ -68,5 +70,5 @@ func (s *Service) Seal(id string) error {
 	if e.State == model.ExpSealed {
 		return model.ErrSealed
 	}
-	return s.store.UpdateExperimentState(id, model.ExpCompleted)
+	return s.store.SealExperiment(id, time.Now())
 }

@@ -15,7 +15,7 @@ const (
 	// ExpCompleted means at least one inversion/release has been produced.
 	ExpCompleted ExperimentState = "completed"
 	// ExpSealed is a terminal state; no further mutations are allowed.
-	ExpSealed ExperimentState = "closed"
+	ExpSealed ExperimentState = "sealed"
 )
 
 // Geometry describes the porous column sample.
