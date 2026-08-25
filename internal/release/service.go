@@ -32,8 +32,13 @@ func (s *Service) Publish(expID, modelID, invID string, perm, lo, hi float64, no
 	if err := s.store.CreateReleaseVersion(r); err != nil {
 		return nil, err
 	}
+	// A successful release of a pending-inversion experiment promotes it to
+	// completed. Sealed experiments are immutable and stay sealed; the release
+	// version itself is already persisted above.
 	if exp.State == model.ExpPendingInversion {
-		_ = s.store.UpdateExperimentState(expID, model.ExpPendingInversion)
+		if err := s.store.UpdateExperimentState(expID, model.ExpCompleted); err != nil {
+			return nil, err
+		}
 	}
 	return r, nil
 }

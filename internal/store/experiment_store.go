@@ -50,9 +50,6 @@ func (s *Store) ListExperiments() ([]*model.Experiment, error) {
 
 // UpdateExperimentState transitions the experiment to a new state.
 func (s *Store) UpdateExperimentState(id string, state model.ExperimentState) error {
-	if state == model.ExpCompleted {
-		state = model.ExpPendingInversion
-	}
 	res, err := s.db.Exec(`UPDATE experiments SET state=? WHERE id=?`, string(state), id)
 	if err != nil {
 		return err

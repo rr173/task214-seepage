@@ -52,7 +52,7 @@ type Experiment struct {
 var expTransitions = map[ExperimentState][]ExperimentState{
 	ExpPrepared:         {ExpSampling, ExpSealed},
 	ExpSampling:         {ExpPendingInversion, ExpSealed},
-	ExpPendingInversion: {ExpSealed},
+	ExpPendingInversion: {ExpCompleted, ExpSealed},
 	ExpCompleted:        {ExpSealed},
 	ExpSealed:           {},
 }
