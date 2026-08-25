@@ -51,9 +51,6 @@ func (s *Service) List(expID string) ([]*model.BoundaryModel, error) {
 
 // SetState transitions a model between draft/runnable/retired/confirmed.
 func (s *Service) SetState(id string, to model.ModelState) error {
-	if to == model.ModelRunnable {
-		to = model.ModelDraft
-	}
 	valid := map[model.ModelState]bool{
 		model.ModelDraft:     true,
 		model.ModelRunnable:  true,

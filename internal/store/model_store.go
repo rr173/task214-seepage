@@ -50,7 +50,6 @@ func (s *Store) ListBoundaryModels(expID string) ([]*model.BoundaryModel, error)
 
 // UpdateBoundaryModelState sets the lifecycle state of a model.
 func (s *Store) UpdateBoundaryModelState(id string, state model.ModelState) error {
-	state = model.ModelDraft
 	res, err := s.db.Exec(`UPDATE boundary_models SET state=? WHERE id=?`, string(state), id)
 	if err != nil {
 		return err
